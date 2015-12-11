@@ -1,0 +1,156 @@
+ext.jettyVersion="9.3.4.v20151007"
+ext.springVersion="4.2.1.RELEASE"
+ext.springSecurity="4.0.2.RELEASE"
+	
+subprojects{
+	
+	apply plugin: 'java'
+	apply plugin: 'eclipse'
+	apply from: "${rootProject.projectDir}/eclipse.gradle"
+	
+	sourceCompatibility = 1.8
+	
+	
+	
+	repositories {
+		 mavenCentral()
+	}
+
+	
+	dependencies{
+		compile 'junit:junit:4.12'
+		testCompile 'junit:junit:4.12'
+		
+	}
+
+	test {
+	 	maxHeapSize = '1G'
+
+		testLogging.showStandardStreams=true;
+	}
+	
+
+	
+	
+	task copyDependencies(type: Copy) {
+		configurations.runtime - configurations.compile  
+	    into "$buildDir/libs/libs"
+	    from configurations.runtime
+	}
+
+	
+	copyDependencies.doLast{
+	
+		//copy real dependencies for current builded project
+		 
+		def deps = project.configurations.default.getAllDependencies().withType(ProjectDependency)
+
+		copy { 
+			 from "${project.projectDir}/src/main/resources/"
+			 include profiles
+			 into "$buildDir/libs/configs/"
+		  } 
+		  
+		for ( dep in deps ) {
+			println "copy configs from ${dep.getDependencyProject().name}"
+			copy { 
+			  from "${dep.getDependencyProject().buildDir}/libs/configs/"
+			  from "${dep.getDependencyProject().projectDir}/src/main/resources/"
+			  include profiles
+			  into "$buildDir/libs/configs/"
+			}
+			// copy aditional resources from dependend project .
+			copy { 
+				 from "${dep.getDependencyProject().buildDir}/libs/"
+				 include inclusions
+				 into "$buildDir/libs/"
+		  	} 
+
+		  }
+		  
+	}
+
+	task initializeTestUtilsDepenecies<<{
+			
+		def deps = project.configurations.default.getAllDependencies().withType(ProjectDependency)
+		println "Reset runtime classpath for ${project.name}";
+
+		// Setting-up test resources manually
+		project.sourceSets.test.runtimeClasspath = files("${project.buildDir}/resources/test");
+		project.sourceSets.test.runtimeClasspath += files("${project.buildDir}/resources/webapp");
+		project.sourceSets.test.runtimeClasspath += files("${project.buildDir}/resources/main");
+		project.sourceSets.test.runtimeClasspath += files("${project.buildDir}/classes/test");
+		project.sourceSets.test.runtimeClasspath += files("${project.buildDir}/classes/main");
+
+
+		println "copy webapp sources from ${project.buildDir}/resources/webapp/ to ${project.buildDir}/classes/main/"
+		copy { 
+			 from "${project.buildDir}/resources/webapp/"
+			 into "${project.buildDir}/classes/main/"
+		  } 
+		
+		project.sourceSets.test.runtimeClasspath += files("${project.buildDir}/libs/configs" );
+		
+		configurations.runtime.collect{
+			project.sourceSets.test.runtimeClasspath += files("${project.buildDir}/libs/libs/" + it.getName());
+		};
+
+		project.sourceSets.test.runtimeClasspath +=files("${project.buildDir}/classes/testUtils");
+		project.sourceSets.test.runtimeClasspath +=files("${project.buildDir}/resources/testUtils");
+		
+		for ( dep in deps ) {
+			println "Set testUtils runtimeClasspath dependencies from ${dep.getDependencyProject().name}";
+
+			project.sourceSets.test.runtimeClasspath +=files("${dep.getDependencyProject().buildDir}/classes/testUtils")
+			project.sourceSets.test.runtimeClasspath +=files("${dep.getDependencyProject().buildDir}/resources/testUtils")
+			
+			
+
+		}
+		
+		
+	}
+
+	compileTestJava.dependsOn(initializeTestUtilsDepenecies).dependsOn(copyDependencies);
+
+	jar.dependsOn(copyDependencies)
+	
+	
+	sourceSets {
+	  webapp {
+	    resources {
+	      srcDir 'src/main/webapp'
+	    }
+	  }
+
+	  testUtils{
+	  	java{
+	  		srcDir 'src/test-utils/java'
+	  	}
+	  	resources {
+	      srcDir 'src/test/resources'
+	    }
+	  	compileClasspath+=sourceSets.main.runtimeClasspath;
+	   }
+  
+	   main {
+	    compileClasspath += sourceSets.webapp.output
+	    runtimeClasspath += sourceSets.webapp.output
+		
+	  }
+
+
+	  test{
+	  	compileClasspath+=sourceSets.testUtils.output;
+	  }
+	}
+
+
+}
+
+
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.0'
+}
+

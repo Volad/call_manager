@@ -1,0 +1,68 @@
+apply plugin: 'eclipse'
+apply plugin : 'java'
+
+
+task cleanEclipseJdtUi(type: Delete) {
+	delete project.file('.settings');
+}
+
+task eclipseJdtUi(type: Copy) {
+	from rootProject.file('.prefs/org.eclipse.jdt.ui.prefs')
+	into project.file('.settings/')
+}
+
+task eclipseJdtPrepare(type: Copy) {
+	from rootProject.file('.prefs/org.eclipse.jdt.core.prefs')
+	into project.file('.settings/')
+}
+
+tasks["eclipseJdt"].dependsOn(eclipseJdtPrepare)
+tasks["cleanEclipse"].dependsOn(cleanEclipseJdtUi)
+tasks["eclipse"].dependsOn(eclipseJdtUi)
+
+def projectName="${project.name}".split("/")
+
+eclipse {
+	project {
+	
+	buildCommand 'org.eclipse.dltk.core.scriptbuilder'
+		natures 'org.eclipse.wst.common.modulecore.ModuleCoreNature',
+				'eclipse.wst.common.project.facet.core.nature',
+				'org.springsource.ide.eclipse.gradle.core.nature',
+				'org.springframework.ide.eclipse.core.springnature',
+				'org.eclipse.wst.jsdt.core.jsNature',
+				'org.eclipse.jdt.core.javanature'
+		name=projectName.size()>1?projectName[1]:projectName[0]
+	}
+
+
+	ext.downloadSources = true
+	ext.downloadJavadoc = true
+	
+	
+    classpath {
+        containers = [
+            'org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8'
+        ]
+	    downloadSources = true
+		downloadJavadoc = true
+    }
+}
+
+
+
+eclipse.jdt.file.withProperties { props ->
+    props.setProperty('org.eclipse.jdt.core.compiler.processAnnotations', 'enabled')
+}
+
+tasks.eclipseJdt {
+    doFirst {
+        def aptPrefs = file('.settings/org.eclipse.jdt.apt.core.prefs')
+        aptPrefs.parentFile.mkdirs()
+
+        aptPrefs.text = """\
+            eclipse.preferences.version=1
+            org.eclipse.jdt.apt.reconcileEnabled=true
+            """.stripIndent()
+    }
+}

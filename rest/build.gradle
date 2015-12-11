@@ -1,0 +1,25 @@
+version = '0.1'
+dependencies{
+			compile project(':db-service')
+			compile 'org.eclipse.jetty:jetty-servlet:'+jettyVersion,
+			'org.eclipse.jetty:jetty-util:'+jettyVersion,
+			'org.eclipse.jetty:jetty-server:'+jettyVersion,
+			'org.eclipse.jetty:jetty-webapp:'+jettyVersion,
+			'org.springframework:spring-webmvc:'+springVersion,
+			'org.springframework.security:spring-security-web:'+springSecurity,
+			'org.springframework.security:spring-security-config:'+springSecurity
+}
+jar {
+	from{
+        "${project.projectDir}/src/main/webapp"
+    }
+	manifest {
+		manifest {
+			attributes 'Implementation-Title': 'Call Manager REST Java Runner',
+			'Implementation-Version': version,
+			'Main-Class':'com.showevidence.rest.app.JettyRunner',
+			'Class-Path' :configurations.runtime.collect{"libs/"+it.getName()}.join(' ') 
+
+		}
+	}
+}
