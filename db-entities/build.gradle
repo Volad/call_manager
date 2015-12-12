@@ -3,7 +3,9 @@ dependencies{
 			compile 'commons-collections:commons-collections:3.2.1',
 					'org.slf4j:slf4j-api:1.7.12',
 					'org.slf4j:slf4j-log4j12:1.7.12',
-					'commons-lang:commons-lang:2.6'
+					'commons-lang:commons-lang:2.6',
+					'javax.persistence:persistence-api:1.0.2'
+
 }
 jar {
 	manifest {

@@ -51,9 +51,6 @@ eclipse {
 
 
 
-eclipse.jdt.file.withProperties { props ->
-    props.setProperty('org.eclipse.jdt.core.compiler.processAnnotations', 'enabled')
-}
 
 tasks.eclipseJdt {
     doFirst {
