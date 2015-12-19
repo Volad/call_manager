@@ -6,7 +6,12 @@ package com.cm.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.OneToOne;
 
 /**
  * @author VladislavKondratenko (k.volad@gmail.com)
@@ -15,7 +20,7 @@ import javax.persistence.Id;
 @Entity
 public class CustomerPhrase {
     @Id
-    @Column
+    @GeneratedValue
     private Long id;
 
     @Column
@@ -24,6 +29,11 @@ public class CustomerPhrase {
     @Column
     private String content;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinTable(name = "caller_phrase", joinColumns = {
+            @JoinColumn(name = "customer_phrase_id", referencedColumnName = "id") }, inverseJoinColumns = {
+                    @JoinColumn(name = "caller_phrase_id", referencedColumnName = "id") })
+    private CallerPhrase callerPhrase;
     /**
      * @return the id
      */
@@ -64,5 +74,19 @@ public class CustomerPhrase {
      */
     public void setContent(String content) {
         this.content = content;
+    }
+
+    /**
+     * @return the callerPhrase
+     */
+    public CallerPhrase getCallerPhrase() {
+        return callerPhrase;
+    }
+
+    /**
+     * @param callerPhrase the callerPhrase to set
+     */
+    public void setCallerPhrase(CallerPhrase callerPhrase) {
+        this.callerPhrase = callerPhrase;
     }
 }

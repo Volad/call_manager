@@ -6,10 +6,12 @@ import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 
 /**
  * @author VladislavKondratenko (k.volad@gmail.com)
@@ -18,7 +20,7 @@ import javax.persistence.ManyToOne;
 @Entity
 public class CallerPhrase {
     @Id
-    @Column
+    @GeneratedValue
     private Long id;
 
     @Column
@@ -33,8 +35,8 @@ public class CallerPhrase {
     @Column(name = "is_initial")
     private boolean initial;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinTable(name = "caller_answer", joinColumns = {
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "customer_answers", joinColumns = {
             @JoinColumn(name = "caller_phrase_id", referencedColumnName = "id") }, inverseJoinColumns = {
                     @JoinColumn(name = "customer_phrase_id", referencedColumnName = "id") })
     private List<CustomerPhrase> customerPhrases;
