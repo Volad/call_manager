@@ -6,12 +6,10 @@ package com.cm.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.OneToOne;
+import javax.persistence.SequenceGenerator;
 
 /**
  * @author VladislavKondratenko (k.volad@gmail.com)
@@ -20,7 +18,9 @@ import javax.persistence.OneToOne;
 @Entity
 public class CustomerPhrase {
     @Id
-    @GeneratedValue
+    @SequenceGenerator(name = "pk_customerphrase_sequence", sequenceName = "customerphrase_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pk_customerphrase_sequence")
+    @Column(name = "id", unique = true, nullable = false)
     private Long id;
 
     @Column
@@ -29,11 +29,6 @@ public class CustomerPhrase {
     @Column
     private String content;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinTable(name = "caller_phrase", joinColumns = {
-            @JoinColumn(name = "customer_phrase_id", referencedColumnName = "id") }, inverseJoinColumns = {
-                    @JoinColumn(name = "caller_phrase_id", referencedColumnName = "id") })
-    private CallerPhrase callerPhrase;
     /**
      * @return the id
      */

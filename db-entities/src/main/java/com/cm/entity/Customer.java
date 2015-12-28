@@ -3,7 +3,9 @@ package com.cm.entity;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 
 /**
  * @author VladislavKondratenko (k.volad@gmail.com)
@@ -12,7 +14,9 @@ import javax.persistence.Id;
 @Entity
 public class Customer {
     @Id
-    @GeneratedValue
+    @SequenceGenerator(name = "pk_customer_sequence", sequenceName = "customer_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pk_customer_sequence")
+    @Column(name = "id", unique = true, nullable = false)
     private Long id;
 
     @Column

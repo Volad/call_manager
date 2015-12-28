@@ -1,17 +1,12 @@
 
 package com.cm.entity;
 
-import java.util.List;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
 
 /**
  * @author VladislavKondratenko (k.volad@gmail.com)
@@ -20,7 +15,9 @@ import javax.persistence.OneToMany;
 @Entity
 public class CallerPhrase {
     @Id
-    @GeneratedValue
+    @SequenceGenerator(name = "pk_callerphrase_sequence", sequenceName = "callerphrase_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pk_callerphrase_sequence")
+    @Column(name = "id", unique = true, nullable = false)
     private Long id;
 
     @Column
@@ -34,12 +31,6 @@ public class CallerPhrase {
 
     @Column(name = "is_initial")
     private boolean initial;
-
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "customer_answers", joinColumns = {
-            @JoinColumn(name = "caller_phrase_id", referencedColumnName = "id") }, inverseJoinColumns = {
-                    @JoinColumn(name = "customer_phrase_id", referencedColumnName = "id") })
-    private List<CustomerPhrase> customerPhrases;
 
     /**
      * @return the id

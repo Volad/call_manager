@@ -5,7 +5,9 @@ import java.util.Date;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
 
 /**
  * @author VladislavKondratenko (k.volad@gmail.com)
@@ -15,7 +17,9 @@ import javax.persistence.Id;
 public class Call {
 
     @Id
-    @GeneratedValue
+    @SequenceGenerator(name = "pk_call_sequence", sequenceName = "call_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "pk_call_sequence")
+    @Column(name = "id", unique = true, nullable = false)
     private Long id;
 
     @Column
