@@ -13,13 +13,14 @@ http://www.springframework.org/schema/util http://www.springframework.org/schema
 http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
 http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
-
+	<import resource="classpath*:cmDbServiceContext.xml" />
+	
 	<context:component-scan base-package="com.cm.rest">
 		<context:exclude-filter type="regex"
 			expression="com.cm.rest.app..*" />
 	</context:component-scan>
 
-	<import resource="classpath*:cmDbServiceContext.xml" />
+	
 
 
 

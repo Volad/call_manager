@@ -8,17 +8,20 @@
 	xmlns:tx="http://www.springframework.org/schema/tx" 
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
    	http://www.springframework.org/schema/aop
-   	http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+   	http://www.springframework.org/schema/aop/spring-aop.xsd
    	http://www.springframework.org/schema/context
-    http://www.springframework.org/schema/context/spring-context-3.0.xsd
+    http://www.springframework.org/schema/context/spring-context.xsd
  	http://www.springframework.org/schema/data/jpa 
- 	http://www.springframework.org/schema/data/jpa/spring-jpa-1.0.xsd
+ 	http://www.springframework.org/schema/data/jpa/spring-jpa.xsd
  	http://www.springframework.org/schema/tx 
     http://www.springframework.org/schema/tx/spring-tx.xsd
         ">
 		
 	<tx:annotation-driven />
     <context:annotation-config />
+    
+    <jpa:repositories base-package="com.cm.db.dao" entity-manager-factory-ref="emf" />
+    
     
 	<context:component-scan base-package="com.cm.db.dao">
 	</context:component-scan>
@@ -43,7 +46,7 @@
 	<bean id="emf"
         class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="dataSource" />
-       	<property name="packagesToScan" value="com.cm" />
+       	<property name="packagesToScan" value="com.cm.entity" />
         <property name="jpaVendorAdapter">
             <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
         </property>
@@ -52,7 +55,7 @@
                 <prop key="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</prop>
                 <prop key="hibernate.show_sql">true</prop>
                 <prop key="hibernate.format_sql">true</prop>
-                <prop key="hibernate.hbm2ddl.auto">create</prop>
+                <prop key="hibernate.hbm2ddl.auto">auto</prop>
             </props>
         </property>
     </bean>

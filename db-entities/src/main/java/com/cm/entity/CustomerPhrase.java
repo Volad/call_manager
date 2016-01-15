@@ -15,7 +15,7 @@ import javax.persistence.SequenceGenerator;
  * @author VladislavKondratenko (k.volad@gmail.com)
  *
  */
-@Entity
+@Entity(name = "customerphrase")
 public class CustomerPhrase {
     @Id
     @SequenceGenerator(name = "pk_customerphrase_sequence", sequenceName = "customerphrase_id_seq", allocationSize = 1)
@@ -71,17 +71,4 @@ public class CustomerPhrase {
         this.content = content;
     }
 
-    /**
-     * @return the callerPhrase
-     */
-    public CallerPhrase getCallerPhrase() {
-        return callerPhrase;
-    }
-
-    /**
-     * @param callerPhrase the callerPhrase to set
-     */
-    public void setCallerPhrase(CallerPhrase callerPhrase) {
-        this.callerPhrase = callerPhrase;
-    }
 }

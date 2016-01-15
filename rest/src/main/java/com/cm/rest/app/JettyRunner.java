@@ -36,9 +36,9 @@ public class JettyRunner {
     private WebAppContext context;
 
     public static void main(final String[] args) {
-        try  {
+        try (ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(JETTY_APP_CONTEXT);) {
             LOGGER.info("Starting Jetty Server");
-            ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(JETTY_APP_CONTEXT);
+
             JettyRunner runner = context.getBean(JettyRunner.class);
             Server server = runner.configureJettyServer();
 
@@ -46,7 +46,6 @@ public class JettyRunner {
             LOGGER.info("Jetty started at port " + runner.port);
         } catch (Throwable e) {
             LOGGER.error("Error during starting jetty server ", e);
-
             System.exit(1);
         }
     }
