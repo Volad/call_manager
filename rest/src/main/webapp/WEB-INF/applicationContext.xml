@@ -21,7 +21,7 @@ http://www.springframework.org/schema/security http://www.springframework.org/sc
 	</context:component-scan>
 
 	
-
+	<mvc:resources mapping="/**" location="WEB-INF/pages/" />
 
 
 	<mvc:annotation-driven />

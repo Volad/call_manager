@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en" >
+<head>
+	<meta charset="utf-8">
+	<title>My HTML File</title>
+	<script src="js/angular/angular.min.js"></script>
+	<script src="js/jquery.min.js"></script>
+	<script src="js/bootstrap/js/modal.js"></script>
+	<script src="js/jquery-ui/jquery-ui.js"></script>
+	  
+	<script src="js/custom/conversation.js"></script>
+	<script src="js/custom/customerPhraseDialog.js"></script>
+	<link rel="stylesheet" href="js/bootstrap/dist/css/bootstrap.min.css">
+	
+	
+
+</head>
+	<body ng-app="conversationApp"  >
+	<startCall>start call</startCall>
+	<callController ng-controller="conversationController">
+		<ul>
+	      <li ng-repeat="callerPhrase in visibleCallerPhrases track by $index"  ng-if="callerPhrase.selected">
+	        <div>{{callerPhrase.title}}</div>
+	        <div class="list-group" style="width:60%">
+		      <a class="list-group-item" ng-class="{'active': customerPhrase.selected}" ng-repeat="customerPhrase in callerPhrase.customerPhrases" ng-click="showNextCallerPhrase(callerPhrase,customerPhrase)">
+		        <span> {{customerPhrase.title}}</span>
+		        <span style="float:right"><button type="button" class="btn btn-link btn-xs" data-toggle="modal"  ng-click="openEditCustomerPhraseDialog($event,callerPhrase,customerPhrase)">Удалить</button></span>
+		        <span style="float:right">|</span>
+		        <span style="float:right"><button type="button" class="btn btn-link btn-xs" data-toggle="modal"  ng-click="deleteCustomerAnswerVariant(callerPhrase,customerPhrase)">Редактировать</button></span>
+		      </a>
+	        </div>
+	        <div>
+	        <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#customerPhraseDialog" ng-click="openCreateCustomerPhraseDialog(callerPhrase)">Добавить вариант ответа</button>
+	        </div>
+	      </li>
+  		</ul> 
+	</callController>
+	<endCall>end call</endCall>
+	
+	     <!-- Modal -->
+		  <div class="modal fade" id="customerPhraseDialog" role="dialog">
+		    <div class="modal-dialog">
+		    
+		      <!-- Modal content-->
+		      <div class="modal-content">
+		        <div class="modal-header">
+		          <button type="button" class="close" data-dismiss="modal">&times;</button>
+		          <h4 class="modal-title">Modal Header</h4>
+		        </div>
+		        <div class="modal-body">
+		          <p>Some text in the modal.</p>
+		        </div>
+		        <div class="modal-footer">
+		          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+		           <button type="button" class="btn btn-default" data-dismiss="modal" id="saveCustomerPhrase">Save</button>
+		        </div>
+		      </div>
+		      
+		    </div>
+		  </div>
+	</body>
+</html>

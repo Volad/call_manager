@@ -70,7 +70,7 @@ public class ConversationFacadeImpl implements ConversationFacade {
         result.setCallerPhrases(callerPhrases);
         result.setCustomerAnswerVariants(
                 customerAnswerVariants.stream().map(c -> c.getAnswerVariantId()).collect(Collectors.toList()));
-        result.setCallerAnswersVariants(
+        result.setCallerAnswerVariants(
                 callerAnswerVariants.stream().map(c -> c.getAnswerVariantId()).collect(Collectors.toList()));
 
         LOGGER.info("User {} conversation data loaded");

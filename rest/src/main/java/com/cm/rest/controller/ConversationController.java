@@ -32,7 +32,7 @@ public class ConversationController extends BaseController {
         return "Hello " + name;
     }
 
-    @RequestMapping(value = "/tree/load/{userId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/tree/{userId}", method = RequestMethod.GET)
     @ResponseBody
     public ConversationDto treeLoad(@PathVariable Long userId) {
         return conversationFacade.loadUserConversationStructure(userId);

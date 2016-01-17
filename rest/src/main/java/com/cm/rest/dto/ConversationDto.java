@@ -17,9 +17,9 @@ import com.cm.entity.CustomerPhrase;
 public class ConversationDto {
     private List<CallerPhrase> callerPhrases;
 
-    private List<CustomerPhrase> customerPhrase;
+    private List<CustomerPhrase> customerPhrases;
 
-    private List<AnswerVariantId> callerAnswersVariants;
+    private List<AnswerVariantId> callerAnswerVariants;
 
     private List<AnswerVariantId> customerAnswerVariants;
 
@@ -40,29 +40,29 @@ public class ConversationDto {
     /**
      * @return the customerPhrase
      */
-    public List<CustomerPhrase> getCustomerPhrase() {
-        return customerPhrase;
+    public List<CustomerPhrase> getCustomerPhrases() {
+        return customerPhrases;
     }
 
     /**
-     * @param customerPhrase the customerPhrase to set
+     * @param customerPhrases the customerPhrase to set
      */
-    public void setCustomerPhrase(List<CustomerPhrase> customerPhrase) {
-        this.customerPhrase = customerPhrase;
+    public void setCustomerPhrase(List<CustomerPhrase> customerPhrases) {
+        this.customerPhrases = customerPhrases;
     }
 
     /**
      * @return the callerAnswersVariants
      */
-    public List<AnswerVariantId> getCallerAnswersVariants() {
-        return callerAnswersVariants;
+    public List<AnswerVariantId> getCallerAnswerVariants() {
+        return callerAnswerVariants;
     }
 
     /**
      * @param callerAnswersVariants the callerAnswersVariants to set
      */
-    public void setCallerAnswersVariants(List<AnswerVariantId> callerAnswersVariants) {
-        this.callerAnswersVariants = callerAnswersVariants;
+    public void setCallerAnswerVariants(List<AnswerVariantId> callerAnswerVariants) {
+        this.callerAnswerVariants = callerAnswerVariants;
     }
 
     /**
