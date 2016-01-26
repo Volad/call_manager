@@ -81,18 +81,18 @@ module.controller('conversationController', ['$scope', '$http','ConversationServ
       }
 
       $scope.openEditCustomerPhraseDialog=function($event,callerPhrase,customerPhrase){
-    	  $event.stopPropagation();
-    	  openDialog(callerPhrase,customerPhrase,false)
+    	 
+    	  openDialog($event,callerPhrase,customerPhrase,false)
       }
-      $scope.openCreateCustomerPhraseDialog=function(callerPhrase,customerPhrase){
-    	  openDialog(callerPhrase,true)
+      $scope.openCreateCustomerPhraseDialog=function($event,callerPhrase,customerPhrase){
+    	  openDialog($event,callerPhrase,null,true)
       }
-      $scope.deleteCustomerAnswerVariant=function(callerPhrase,customerPhrase){
-    	  conversationService.deleteCustomerAnswerVariant(customerPhrase.id,callerPhrase.id);
+      $scope.deleteCustomerAnswerVariant=function($event,callerPhrase,customerPhrase){
+    	  conversationService.deleteCustomerAnswerVariant($event,customerPhrase.id,callerPhrase.id);
       }
       
-      openDialog=function(callerPhrase,customerPhrase,isCreate){
-    	  
+      openDialog=function($event,callerPhrase,customerPhrase,isCreate){
+    	  $event.stopPropagation();
     	  var dialogDiv = $('#customerPhraseDialog');
     	  var dialog = $(dialogDiv).customerPhraseDialog({
 				//overide widget field 

@@ -24,13 +24,13 @@
 	        <div class="list-group" style="width:60%">
 		      <a class="list-group-item" ng-class="{'active': customerPhrase.selected}" ng-repeat="customerPhrase in callerPhrase.customerPhrases" ng-click="showNextCallerPhrase(callerPhrase,customerPhrase)">
 		        <span> {{customerPhrase.title}}</span>
-		        <span style="float:right"><button type="button" class="btn btn-link btn-xs" data-toggle="modal"  ng-click="openEditCustomerPhraseDialog($event,callerPhrase,customerPhrase)">Удалить</button></span>
+		        <span style="float:right"><button type="button" class="btn btn-link btn-xs" data-toggle="modal"  ng-click="deleteCustomerAnswerVariant($event,callerPhrase,customerPhrase)">Удалить</button></span>
 		        <span style="float:right">|</span>
-		        <span style="float:right"><button type="button" class="btn btn-link btn-xs" data-toggle="modal"  ng-click="deleteCustomerAnswerVariant(callerPhrase,customerPhrase)">Редактировать</button></span>
+		        <span style="float:right"><button type="button" class="btn btn-link btn-xs" data-toggle="modal"  ng-click="openEditCustomerPhraseDialog($event,callerPhrase,customerPhrase)">Редактировать</button></span>
 		      </a>
 	        </div>
 	        <div>
-	        <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#customerPhraseDialog" ng-click="openCreateCustomerPhraseDialog(callerPhrase)">Добавить вариант ответа</button>
+	        <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#customerPhraseDialog" ng-click="openCreateCustomerPhraseDialog($event,callerPhrase)">Добавить вариант ответа</button>
 	        </div>
 	      </li>
   		</ul> 

@@ -4,7 +4,6 @@
 	$.widget("ui.customerPhraseDialog", {
 	  options: {
 	  	callerPhrase: null,
-	  	isCreateDialog:true,
 	  	customerPhrase:null
 	  },
 	
