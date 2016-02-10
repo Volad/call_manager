@@ -6,11 +6,13 @@ package com.cm.rest.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cm.entity.CustomerPhrase;
 import com.cm.rest.app.ApiVersions;
 import com.cm.rest.dto.ConversationDto;
 import com.cm.rest.facade.conversation.ConversationFacade;
@@ -37,4 +39,24 @@ public class ConversationController extends BaseController {
     public ConversationDto treeLoad(@PathVariable Long userId) {
         return conversationFacade.loadUserConversationStructure(userId);
     }
+
+    @RequestMapping(value = "/customer/phrase/update", method = RequestMethod.PUT)
+    @ResponseBody
+    public void updateCustomerPhrase(@RequestBody CustomerPhrase customerPhrase) {
+        conversationFacade.updateCustomerPhrase(customerPhrase);
+    }
+
+    @RequestMapping(value = "/customer/phrase/create/{callerPhraseId}", method = RequestMethod.POST)
+    @ResponseBody
+    public CustomerPhrase CustomerPhrase(@PathVariable Long callerPhraseId,
+            @RequestBody CustomerPhrase customerPhrase) {
+        return conversationFacade.createCustomerPhrase(callerPhraseId, customerPhrase);
+    }
+
+    @RequestMapping(value = "/customer/phrase/delete/{customerPhraseId}/{callerPhraseId}", method = RequestMethod.DELETE)
+    @ResponseBody
+    public void deleteCustomerPhrase(@PathVariable Long customerPhraseId, @PathVariable Long callerPhraseId) {
+        conversationFacade.deleteCustomerPhrase(callerPhraseId, customerPhraseId);
+    }
+
 }

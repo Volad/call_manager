@@ -18,9 +18,11 @@ import com.cm.db.service.customer.CustomerAnswerVariantsService;
 import com.cm.db.service.customer.CustomerPhraseService;
 import com.cm.db.service.user.CallerAnswerVariantsService;
 import com.cm.db.service.user.CallerPhraseService;
+import com.cm.entity.AnswerVariantId;
 import com.cm.entity.CallerAnswerVariants;
 import com.cm.entity.CallerPhrase;
 import com.cm.entity.CustomerAnswerVariants;
+import com.cm.entity.CustomerPhrase;
 import com.cm.entity.User;
 import com.cm.rest.dto.ConversationDto;
 import com.cm.rest.facade.conversation.ConversationFacade;
@@ -75,6 +77,36 @@ public class ConversationFacadeImpl implements ConversationFacade {
 
         LOGGER.info("User {} conversation data loaded");
         return result;
+    }
+
+    @Override
+    public void updateCustomerPhrase(CustomerPhrase customerPhrase) {
+        LOGGER.info("Updating customerPhrase {}", customerPhrase);
+        customerPhraseService.save(customerPhrase);
+    }
+
+    @Override
+    public CustomerPhrase createCustomerPhrase(Long callerPhraseId, CustomerPhrase customerPhrase) {
+        LOGGER.info("create Customer Phrase callerPhraseId {} customerPhrase {}", callerPhraseId, customerPhrase);
+        CustomerPhrase customerP = customerPhraseService.save(customerPhrase);
+        CustomerAnswerVariants cav = new CustomerAnswerVariants();
+
+        AnswerVariantId varId = new AnswerVariantId();
+        varId.setCallerPhraseId(callerPhraseId);
+        varId.setCustomerPhraseId(customerP.getId());
+        cav.setAnswerVariantId(varId);
+
+        customerAnswerVariantsService.save(cav);
+        return customerP;
+    }
+
+    @Override
+    public void deleteCustomerPhrase(Long callerPhraseId, Long customerPhraseId) {
+        LOGGER.info("delete Customer Phrase callerPhraseId {} customerPhrase {}", callerPhraseId, customerPhraseId);
+        AnswerVariantId varId = new AnswerVariantId();
+        varId.setCallerPhraseId(callerPhraseId);
+        varId.setCustomerPhraseId(customerPhraseId);
+        customerAnswerVariantsService.delete(varId);
     }
 
 }
