@@ -34,6 +34,9 @@ public class Call {
     @Column
     private Long customerId;
 
+    @Column
+    private String history;
+
     /**
      * @return the id
      */
@@ -102,5 +105,19 @@ public class Call {
      */
     public void setCustomerId(Long customerId) {
         this.customerId = customerId;
+    }
+
+    /**
+     * @return the history
+     */
+    public String getHistory() {
+        return history;
+    }
+
+    /**
+     * @param history the history to set
+     */
+    public void setHistory(String history) {
+        this.history = history;
     }
 }

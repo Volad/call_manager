@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.cm.entity.CustomerPhrase;
 import com.cm.rest.app.ApiVersions;
+import com.cm.rest.dto.CallDto;
 import com.cm.rest.dto.ConversationDto;
 import com.cm.rest.facade.conversation.ConversationFacade;
 
@@ -46,9 +47,15 @@ public class ConversationController extends BaseController {
         conversationFacade.updateCustomerPhrase(customerPhrase);
     }
 
+    @RequestMapping(value = "/call", method = RequestMethod.PUT)
+    @ResponseBody
+    public void saveCall(@RequestBody CallDto callDto) {
+        conversationFacade.saveCall(callDto);
+    }
+
     @RequestMapping(value = "/customer/phrase/create/{callerPhraseId}", method = RequestMethod.POST)
     @ResponseBody
-    public CustomerPhrase CustomerPhrase(@PathVariable Long callerPhraseId,
+    public CustomerPhrase customerPhrase(@PathVariable Long callerPhraseId,
             @RequestBody CustomerPhrase customerPhrase) {
         return conversationFacade.createCustomerPhrase(callerPhraseId, customerPhrase);
     }

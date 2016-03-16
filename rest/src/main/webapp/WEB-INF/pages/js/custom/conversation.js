@@ -44,6 +44,10 @@ module.service('ConversationService', function($http) {
 	this.updateCustomerPhrase = function(customerPhrase) {
 		$http.put("/rest/1.0/conversation/customer/phrase/update", customerPhrase);
 	}
+	
+	this.saveCall = function(callData) {
+		$http.put("/rest/1.0/conversation/call", callData);
+	}
 
 	this.addCustomerPhrase = function(callerPhrase, customerPhrase) {
 
@@ -69,75 +73,95 @@ module.controller('conversationController', [
 		'ConversationService',
 		function($scope, $http, conversationService) {
 			$scope.conversationData = [];
-			conversationService.loadTree(2, function(data) {
-				$scope.conversationData = data;
-				$scope.visibleCallerPhrases = []
+			$scope.callData={callerId:2};
+			$scope.startCall=function(){
+				$scope.callData.startTime=new Date();
+				conversationService.loadTree(2, function(data) {
+					$scope.conversationData = data;
+					$scope.visibleCallerPhrases = []
 
-				var initialPhrase = conversationService.getInitialCallerPhrase(data.callerPhrases)
+					var initialPhrase = conversationService.getInitialCallerPhrase(data.callerPhrases)
 
-				pushNewCallerPhrase(initialPhrase)
+					pushNewCallerPhrase(initialPhrase)
 
-				$scope.showNextCallerPhrase = function(callerPhrase, customerPhrase) {
-					if (callerPhrase.historyIndex < $scope.visibleCallerPhrases.length) {
-						$scope.visibleCallerPhrases = $scope.visibleCallerPhrases.slice(0, callerPhrase.historyIndex);
+					$scope.showNextCallerPhrase = function(callerPhrase, customerPhrase) {
+						if (callerPhrase.historyIndex < $scope.visibleCallerPhrases.length) {
+							$scope.visibleCallerPhrases = $scope.visibleCallerPhrases.slice(0, callerPhrase.historyIndex);
+						}
+						for ( var i in callerPhrase.customerPhrases) {
+							callerPhrase.customerPhrases[i].selected = false;
+						}
+						customerPhrase.selected = true;
+						var callerPhrase = conversationService.getCallerPhraseByCustomerPhraseId(customerPhrase.id, $scope.conversationData.callerAnswerVariants,
+								$scope.conversationData.callerPhrases);
+						pushNewCallerPhrase(callerPhrase)
+
+					};
+
+					function pushNewCallerPhrase(callerPhrase) {
+						callerPhrase == $.extend({}, callerPhrase)
+						callerPhrase.selected = true;
+						callerPhrase.customerPhrases = conversationService.getCustomerPhraseByCallerPhraseId(callerPhrase.id,
+								$scope.conversationData.customerPhrases, $scope.conversationData.customerAnswerVariants);
+						$scope.visibleCallerPhrases.push(callerPhrase);
+						callerPhrase.historyIndex = $scope.visibleCallerPhrases.length;
 					}
-					for ( var i in callerPhrase.customerPhrases) {
-						callerPhrase.customerPhrases[i].selected = false;
-					}
-					customerPhrase.selected = true;
-					var callerPhrase = conversationService.getCallerPhraseByCustomerPhraseId(customerPhrase.id, $scope.conversationData.callerAnswerVariants,
-							$scope.conversationData.callerPhrases);
-					pushNewCallerPhrase(callerPhrase)
 
-				};
-
-				function pushNewCallerPhrase(callerPhrase) {
-					callerPhrase == $.extend({}, callerPhrase)
-					callerPhrase.selected = true;
-					callerPhrase.customerPhrases = conversationService.getCustomerPhraseByCallerPhraseId(callerPhrase.id,
-							$scope.conversationData.customerPhrases, $scope.conversationData.customerAnswerVariants);
-					$scope.visibleCallerPhrases.push(callerPhrase);
-					callerPhrase.historyIndex = $scope.visibleCallerPhrases.length;
-				}
-
-				$scope.openEditCustomerPhraseDialog = function($event, callerPhrase, customerPhrase) {
-					openDialog($event, callerPhrase, customerPhrase, false)
-				};
-				$scope.openCreateCustomerPhraseDialog = function($event, callerPhrase, customerPhrase) {
-					openDialog($event, callerPhrase, null, true)
-				};
-				$scope.deleteCustomerAnswerVariant = function($event, callerPhrase, customerPhraseId) {
-					$event.stopPropagation();
-					conversationService.deleteCustomerAnswer(customerPhraseId, callerPhrase.id,function(){
-						var targetCp=[]
-						for (var i in callerPhrase.customerPhrases){
-							var cp=callerPhrase.customerPhrases[i]
-							if(cp.id==customerPhraseId){
-								continue;
+					$scope.openEditCustomerPhraseDialog = function($event, callerPhrase, customerPhrase) {
+						openDialog($event, callerPhrase, customerPhrase, false)
+					};
+					$scope.openCreateCustomerPhraseDialog = function($event, callerPhrase, customerPhrase) {
+						openDialog($event, callerPhrase, null, true)
+					};
+					$scope.deleteCustomerAnswerVariant = function($event, callerPhrase, customerPhraseId) {
+						$event.stopPropagation();
+						conversationService.deleteCustomerAnswer(customerPhraseId, callerPhrase.id,function(){
+							var targetCp=[]
+							for (var i in callerPhrase.customerPhrases){
+								var cp=callerPhrase.customerPhrases[i]
+								if(cp.id==customerPhraseId){
+									continue;
+								}
+								targetCp.push(cp)
 							}
-							targetCp.push(cp)
-						}
-						callerPhrase.customerPhrases=targetCp
-					});
-		
-				};
+							callerPhrase.customerPhrases=targetCp
+						});
+			
+					};
 
-				openDialog = function($event, callerPhrase, customerPhrase, isCreate) {
-					$event.stopPropagation();
-					var dialogDiv = $('#customerPhraseDialog');
-					var dialog = $(dialogDiv).customerPhraseDialog({
-						isCreateDialog : isCreate,
-						onCustomerPhraseChanged : function(evt, phrase) {
-							conversationService.updateCustomerPhrase(phrase)
-							$scope.$apply($scope.visibleCallerPhrases);
-						},
+					openDialog = function($event, callerPhrase, customerPhrase, isCreate) {
+						$event.stopPropagation();
+						var dialogDiv = $('#customerPhraseDialog');
+						var dialog = $(dialogDiv).customerPhraseDialog({
+							isCreateDialog : isCreate,
+							callerPhrases:$scope.conversationData.callerPhrases,
+							onCustomerPhraseChanged : function(evt, changedCustomerPhrase,newCallerPhrase) {
+								conversationService.updateCustomerPhrase(changedCustomerPhrase)
+								alert(newCallerPhrase)
+								$scope.$apply($scope.visibleCallerPhrases);
+							},
 
-						onCustomerPhraseCreate : function(evt, callerPhrase, customerPhrase) {
-							conversationService.addCustomerPhrase(callerPhrase, customerPhrase);
-							$scope.$apply($scope.visibleCallerPhrases);
+							onCustomerPhraseCreate : function(evt, callerPhrase, customerPhrase) {
+								conversationService.addCustomerPhrase(callerPhrase, customerPhrase);
+								$scope.$apply($scope.visibleCallerPhrases);
+							}
+						});
+						var nextCallerPhrase;
+						if(!isCreate){
+							var nextCallerPhrase= conversationService.getCallerPhraseByCustomerPhraseId(customerPhrase.id, $scope.conversationData.callerAnswerVariants,
+									$scope.conversationData.callerPhrases);
 						}
-					});
-					$(dialogDiv).customerPhraseDialog('openDialog', callerPhrase, isCreate, customerPhrase);
+						$(dialogDiv).customerPhraseDialog('openDialog', callerPhrase, isCreate, customerPhrase,nextCallerPhrase);
+					}
+				});
+			};
+			$scope.endCall=function(){
+				if(!$scope.callData.startCall){
+					alert("Перед тем как что-то закончить надо что-то начать")
+					return;
 				}
-			})
+				$scope.callData.endTime=new Date();
+				$scope.callData.history=$scope.visibleCallerPhrases;
+				conversationService.saveCall($scope.callData);
+			}
 		} ]);

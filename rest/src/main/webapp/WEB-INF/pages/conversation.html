@@ -16,8 +16,9 @@
 
 </head>
 	<body ng-app="conversationApp"  >
-	<startCall>start call</startCall>
+	
 	<callController ng-controller="conversationController">
+		<button type="button" class="btn btn-success btn-sm" ng-click="startCall()">Начать звонок</button>
 		<ul>
 	      <li ng-repeat="callerPhrase in visibleCallerPhrases track by $index"  ng-if="callerPhrase.selected">
 	        <div>{{callerPhrase.title}}</div>
@@ -30,12 +31,14 @@
 		      </a>
 	        </div>
 	        <div>
-	        <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#customerPhraseDialog" ng-click="openCreateCustomerPhraseDialog($event,callerPhrase)">Добавить вариант ответа</button>
+	        <button type="button" class="btn btn-info btn-sm" data-toggle="modal" data-target="#customerPhraseDialog" ng-click="openCreateCustomerPhraseDialog($event,callerPhrase)">Добавить ответ</button>
 	        </div>
 	      </li>
   		</ul> 
+  		<button type="button" class="btn btn-success btn-sm" ng-click="endCall()">Завершить звонок</button>
 	</callController>
-	<endCall>end call</endCall>
+	
+	
 	
 	     <!-- Modal -->
 		  <div class="modal fade" id="customerPhraseDialog" role="dialog">

@@ -24,6 +24,7 @@ import com.cm.entity.CallerPhrase;
 import com.cm.entity.CustomerAnswerVariants;
 import com.cm.entity.CustomerPhrase;
 import com.cm.entity.User;
+import com.cm.rest.dto.CallDto;
 import com.cm.rest.dto.ConversationDto;
 import com.cm.rest.facade.conversation.ConversationFacade;
 import com.cm.rest.facade.user.UserFacade;
@@ -107,6 +108,11 @@ public class ConversationFacadeImpl implements ConversationFacade {
         varId.setCallerPhraseId(callerPhraseId);
         varId.setCustomerPhraseId(customerPhraseId);
         customerAnswerVariantsService.delete(varId);
+    }
+
+    @Override
+    public void saveCall(CallDto callDto) {
+        LOGGER.info("saveCall {}", callDto);
     }
 
 }
