@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cm.entity.CallerPhrase;
 import com.cm.entity.CustomerPhrase;
 import com.cm.rest.app.ApiVersions;
 import com.cm.rest.dto.CallDto;
@@ -58,6 +59,18 @@ public class ConversationController extends BaseController {
     public CustomerPhrase customerPhrase(@PathVariable Long callerPhraseId,
             @RequestBody CustomerPhrase customerPhrase) {
         return conversationFacade.createCustomerPhrase(callerPhraseId, customerPhrase);
+    }
+
+    @RequestMapping(value = "/caller/phrase/create", method = RequestMethod.POST)
+    @ResponseBody
+    public CallerPhrase callerPhrase(@RequestBody CallerPhrase callerPhrase) {
+        return conversationFacade.createCallerPhrase(callerPhrase);
+    }
+
+    @RequestMapping(value = "/customer/answer/update/{customerPhraseId}/{callerPhraseId}", method = RequestMethod.POST)
+    @ResponseBody
+    public void updateCustomerAnsweVariants(@PathVariable Long customerPhraseId, @PathVariable Long callerPhraseId) {
+        conversationFacade.updateCustomerAnsweVariants(customerPhraseId, callerPhraseId);
     }
 
     @RequestMapping(value = "/customer/phrase/delete/{customerPhraseId}/{callerPhraseId}", method = RequestMethod.DELETE)

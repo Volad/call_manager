@@ -13,9 +13,9 @@ import java.util.List;
  */
 public class CallDto {
 
-    private int callerId;
+    private Long callerId;
 
-    private Integer customerId;
+    private Long customerId;
 
     private Date startTime;
 
@@ -26,28 +26,28 @@ public class CallDto {
     /**
      * @return the callerId
      */
-    public int getCallerId() {
+    public Long getCallerId() {
         return callerId;
     }
 
     /**
      * @param callerId the callerId to set
      */
-    public void setCallerId(int callerId) {
+    public void setCallerId(Long callerId) {
         this.callerId = callerId;
     }
 
     /**
      * @return the customerId
      */
-    public Integer getCustomerId() {
+    public Long getCustomerId() {
         return customerId;
     }
 
     /**
      * @param customerId the customerId to set
      */
-    public void setCustomerId(Integer customerId) {
+    public void setCustomerId(Long customerId) {
         this.customerId = customerId;
     }
 

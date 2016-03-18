@@ -42,7 +42,7 @@ module.service('ConversationService', function($http) {
 	}
 
 	this.updateCustomerPhrase = function(customerPhrase) {
-		$http.put("/rest/1.0/conversation/customer/phrase/update", customerPhrase);
+		 $http.put("/rest/1.0/conversation/customer/phrase/update", customerPhrase);
 	}
 	
 	this.saveCall = function(callData) {
@@ -55,6 +55,21 @@ module.service('ConversationService', function($http) {
 			callerPhrase.customerPhrases.push(data)
 		})
 	},
+	this.createCallerPhrase = function(callerPhrase) {
+
+		return $http.post("/rest/1.0/conversation/caller/phrase/create/", callerPhrase).success(function(data) {
+			return data;
+		});
+	},
+	
+	this.updateCallerAnswerVariants = function(customerPhraseId,callerPhraseId) {
+
+		return $http.post("/rest/1.0/conversation/customer/answer/update/"+customerPhraseId+"/"+callerPhraseId);
+	},
+	
+
+	
+	
 
 	getById = function(id, collection) {
 		for ( var i in collection) {
@@ -132,36 +147,63 @@ module.controller('conversationController', [
 					openDialog = function($event, callerPhrase, customerPhrase, isCreate) {
 						$event.stopPropagation();
 						var dialogDiv = $('#customerPhraseDialog');
-						var dialog = $(dialogDiv).customerPhraseDialog({
-							isCreateDialog : isCreate,
-							callerPhrases:$scope.conversationData.callerPhrases,
-							onCustomerPhraseChanged : function(evt, changedCustomerPhrase,newCallerPhrase) {
-								conversationService.updateCustomerPhrase(changedCustomerPhrase)
-								alert(newCallerPhrase)
-								$scope.$apply($scope.visibleCallerPhrases);
-							},
-
-							onCustomerPhraseCreate : function(evt, callerPhrase, customerPhrase) {
-								conversationService.addCustomerPhrase(callerPhrase, customerPhrase);
-								$scope.$apply($scope.visibleCallerPhrases);
+						var dialog;
+						if(!$scope.dialog){
+							 dialog = $(dialogDiv).customerPhraseDialog({
+								isCreateDialog : isCreate,
+								callerPhrases:$scope.conversationData.callerPhrases,
+								onCustomerPhraseChanged : function(evt, changedCustomerPhrase,newCallerPhrase) {
+									if(newCallerPhrase&&!newCallerPhrase.id){
+										newCallerPhrase.callerId=$scope.callData.callerId;
+										conversationService.createCallerPhrase(newCallerPhrase).then(function(response){
+											$scope.conversationData.callerPhrases.push(response.data)
+											updatePhrases(changedCustomerPhrase,response.data,true);
+										})
+										
+									}else{
+										updatePhrases(changedCustomerPhrase,newCallerPhrase);
+									}
+									
+									
+									function updatePhrases(changedCustomerPhrase,newCallerPhrase,isNew){
+										 conversationService.updateCustomerPhrase(changedCustomerPhrase);
+											 conversationService.updateCallerAnswerVariants(changedCustomerPhrase.id,newCallerPhrase.id).then(function(){
+												 for(i in $scope.conversationData.callerAnswerVariants){
+														var answerVariant=$scope.conversationData.callerAnswerVariants[i];
+														if(answerVariant.customerPhraseId==changedCustomerPhrase.id){
+															answerVariant.callerPhraseId=newCallerPhrase.id;
+															return;
+														}
+													}
+												 $scope.conversationData.callerAnswerVariants.push({"callerPhraseId":newCallerPhrase.id,"customerPhraseId":changedCustomerPhrase.id});
+											 });
+									}
+								},
+	
+								onCustomerPhraseCreate : function(evt, callerPhrase, customerPhrase) {
+									conversationService.addCustomerPhrase(callerPhrase, customerPhrase);
+									$scope.$apply($scope.visibleCallerPhrases);
+								}
+							});
+							var nextCallerPhrase;
+							if(!isCreate){
+								var nextCallerPhrase= conversationService.getCallerPhraseByCustomerPhraseId(customerPhrase.id, $scope.conversationData.callerAnswerVariants,
+										$scope.conversationData.callerPhrases);
 							}
-						});
-						var nextCallerPhrase;
-						if(!isCreate){
-							var nextCallerPhrase= conversationService.getCallerPhraseByCustomerPhraseId(customerPhrase.id, $scope.conversationData.callerAnswerVariants,
-									$scope.conversationData.callerPhrases);
+							$scope.dialog=dialog;
 						}
 						$(dialogDiv).customerPhraseDialog('openDialog', callerPhrase, isCreate, customerPhrase,nextCallerPhrase);
 					}
 				});
 			};
 			$scope.endCall=function(){
-				if(!$scope.callData.startCall){
+				if(!$scope.callData.startTime){
 					alert("Перед тем как что-то закончить надо что-то начать")
 					return;
 				}
 				$scope.callData.endTime=new Date();
 				$scope.callData.history=$scope.visibleCallerPhrases;
 				conversationService.saveCall($scope.callData);
+				location.reload();
 			}
 		} ]);

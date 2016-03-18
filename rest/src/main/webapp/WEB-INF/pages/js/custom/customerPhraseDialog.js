@@ -59,7 +59,10 @@
 						$("<div><select class='form-control' id='dialog_cp'>"+selectContent+"</select><div>").appendTo(rbActionContent);
 					})
 			}
-
+			if(thisObj.options.nextCallerPhrase){
+				$("#rb_group_ce",callerPhraseContainer).click()
+			}			
+			$("#saveCustomerPhrase").off('click')
 			$("#saveCustomerPhrase", modalFooter).on("click", function() {
 				// TODO [vk]: implement saving or updating customer answer variants
 				console.log("value save")
@@ -89,11 +92,11 @@
 						id : customerPhrase.id
 					},callerPhrase]);
 				} else {
-					thisObj._trigger("onCustomerPhraseCreate", null, [ callerPhrase, {
+					thisObj._trigger("onCustomerPhraseCreate", null, [ thisObj.options.callerPhrase, {
 						title : value
 					} ]);
 				}
-
+				$("#saveCustomerPhrase").off('click')
 			});
 			//			
 		},

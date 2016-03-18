@@ -108,4 +108,18 @@ public class CallerPhraseDto {
     public void setCustomerPhrases(List<CustomerPhraseDto> customerPhrases) {
         this.customerPhrases = customerPhrases;
     }
+
+    /**
+     * @return the historyIndex
+     */
+    public int getHistoryIndex() {
+        return historyIndex;
+    }
+
+    /**
+     * @param historyIndex the historyIndex to set
+     */
+    public void setHistoryIndex(int historyIndex) {
+        this.historyIndex = historyIndex;
+    }
 }

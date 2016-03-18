@@ -32,4 +32,9 @@ public class CallerAnswerVariantsServiceImpl extends AnswerVariantsServiceAbstra
         return dao;
     }
 
+    @Override
+    public void updateByCustomerPhraseId(Long callerPhraseId, Long customerPhraseId) {
+        dao.updateByCustomerId(callerPhraseId, customerPhraseId);
+    }
+
 }

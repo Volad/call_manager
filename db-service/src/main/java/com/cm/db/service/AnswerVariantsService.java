@@ -17,4 +17,5 @@ public interface AnswerVariantsService<T extends AnswerVariants> extends DbServi
     List<T> findByAnswerVariantIdCustomerPhraseIdIn(List<Long> customerPhraseId);
 
     List<T> findByAnswerVariantIdCallerPhraseIdIn(List<Long> callerPhraseId);
+
 }

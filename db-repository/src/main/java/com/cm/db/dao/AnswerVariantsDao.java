@@ -21,4 +21,5 @@ public interface AnswerVariantsDao<T extends AnswerVariants> extends JpaReposito
     List<T> findByAnswerVariantIdCustomerPhraseIdIn(List<Long> customerPhraseId);
 
     List<T> findByAnswerVariantIdCallerPhraseIdIn(List<Long> callerPhraseId);
+
 }

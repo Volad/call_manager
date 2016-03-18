@@ -4,6 +4,7 @@
  */
 package com.cm.rest.facade.conversation.impl;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,11 +15,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.cm.db.service.call.CallService;
 import com.cm.db.service.customer.CustomerAnswerVariantsService;
 import com.cm.db.service.customer.CustomerPhraseService;
 import com.cm.db.service.user.CallerAnswerVariantsService;
 import com.cm.db.service.user.CallerPhraseService;
 import com.cm.entity.AnswerVariantId;
+import com.cm.entity.Call;
 import com.cm.entity.CallerAnswerVariants;
 import com.cm.entity.CallerPhrase;
 import com.cm.entity.CustomerAnswerVariants;
@@ -28,6 +31,8 @@ import com.cm.rest.dto.CallDto;
 import com.cm.rest.dto.ConversationDto;
 import com.cm.rest.facade.conversation.ConversationFacade;
 import com.cm.rest.facade.user.UserFacade;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * @author VladislavKondratenko (k.volad@gmail.com)
@@ -37,6 +42,7 @@ import com.cm.rest.facade.user.UserFacade;
 @Transactional
 public class ConversationFacadeImpl implements ConversationFacade {
     private static final Logger LOGGER = LoggerFactory.getLogger(ConversationFacadeImpl.class);
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Autowired
     private UserFacade userFacade;
@@ -52,6 +58,9 @@ public class ConversationFacadeImpl implements ConversationFacade {
 
     @Autowired
     private CallerAnswerVariantsService callerAnswerVariantsService;
+
+    @Autowired
+    private CallService callService;
 
     @Override
     public ConversationDto loadUserConversationStructure(long userId) {
@@ -112,7 +121,55 @@ public class ConversationFacadeImpl implements ConversationFacade {
 
     @Override
     public void saveCall(CallDto callDto) {
-        LOGGER.info("saveCall {}", callDto);
+        Call call = covertToCall(callDto);
+        callService.save(call);
+    }
+
+    /**
+     * @param callDto
+     * @return
+     */
+    private Call covertToCall(CallDto callDto) {
+        Call call = new Call();
+        call.setCallerId(callDto.getCallerId());
+        call.setCustomerId(callDto.getCustomerId());
+        call.setStartTime(callDto.getStartTime());
+        call.setEndTime(callDto.getEndTime());
+        try {
+            call.setHistory(MAPPER.writeValueAsString(callDto.getHistory()));
+        } catch (JsonProcessingException e) {
+            LOGGER.error("Error on parse to dto", callDto);
+        }
+        return call;
+    }
+
+    @Override
+    public CallerPhrase createCallerPhrase(CallerPhrase callerPhrase) {
+        return callerPhraseService.save(callerPhrase);
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see com.cm.rest.facade.conversation.ConversationFacade#updateCustomerAnsweVariants(java.lang.Long,
+     * java.lang.Long)
+     */
+    @Override
+    public void updateCustomerAnsweVariants(Long customerPhraseId, Long callerPhraseId) {
+        CallerAnswerVariants cav = callerAnswerVariantsService
+                .findByAnswerVariantIdCustomerPhraseIdIn(Arrays.asList(customerPhraseId)).stream().findAny()
+                .orElse(null);
+
+        if (cav != null) {
+            callerAnswerVariantsService.updateByCustomerPhraseId(callerPhraseId, customerPhraseId);
+        } else {
+            cav = new CallerAnswerVariants();
+            AnswerVariantId varId = new AnswerVariantId();
+            varId.setCallerPhraseId(callerPhraseId);
+            varId.setCustomerPhraseId(customerPhraseId);
+            cav.setAnswerVariantId(varId);
+            callerAnswerVariantsService.save(cav);
+        }
+
     }
 
 }

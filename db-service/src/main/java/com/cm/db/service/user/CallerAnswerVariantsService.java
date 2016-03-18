@@ -13,4 +13,6 @@ import com.cm.entity.CallerAnswerVariants;
  */
 public interface CallerAnswerVariantsService extends AnswerVariantsService<CallerAnswerVariants> {
 
+    void updateByCustomerPhraseId(Long callerPhraseId, Long customerPhraseId);
+
 }
